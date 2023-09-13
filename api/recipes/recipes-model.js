@@ -1,7 +1,7 @@
 const db = require("../../data/db-config");
 
-const getRecipeById = async (id) => {
-  await db("recipes").where("id", id);
+const getRecipeById = (recipe_id) => {
+  return db("recipes").where("recipe_id", recipe_id).first();
 };
 
 module.exports = {

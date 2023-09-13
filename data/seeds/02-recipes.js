@@ -1,8 +1,8 @@
 exports.seed = function (knex) {
   // Deletes ALL existing entries
   return knex("recipes").insert([
-    { colName: "rowValue1" },
-    { colName: "rowValue2" },
-    { colName: "rowValue3" },
+    { recipe_name: "lasagna" },
+    { recipe_name: "spaghetti" },
+    { recipe_name: "pollo alla milanese" },
   ]);
 };
