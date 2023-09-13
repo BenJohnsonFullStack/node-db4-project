@@ -26,15 +26,6 @@ exports.up = async function (knex) {
     .createTable("ingredients", (tbl) => {
       tbl.increments("ingredient_id");
       tbl.string("ingredient_name").notNullable().unique();
-      tbl.string("quantity").notNullable();
-      tbl
-        .integer("step_id")
-        .unsigned()
-        .notNullable()
-        .references("step_id")
-        .inTable("steps")
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
       tbl.timestamps(true, true);
     })
     .createTable("recipe_ingredients", (tbl) => {
@@ -55,7 +46,15 @@ exports.up = async function (knex) {
         .inTable("ingredients")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
-      tbl.integer("quantity").unsigned().notNullable();
+      tbl
+        .integer("step_id")
+        .unsigned()
+        .notNullable()
+        .references("step_id")
+        .inTable("steps")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl.string("quantity").notNullable();
       tbl.timestamps(true, true);
     });
 };
