@@ -1,9 +1,16 @@
 const express = require("express");
+const Recipe = require("./recipes-model");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json("api online");
+router.get("/:recipe_id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const recipe = await Recipe.getRecipeById(id);
+    res.json(recipe);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // eslint-disable-next-line no-unused-vars

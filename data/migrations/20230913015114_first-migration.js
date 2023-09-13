@@ -12,6 +12,9 @@ exports.up = async function (knex) {
     })
     .createTable("steps", (tbl) => {
       tbl.increments("step_id");
+    })
+    .createTable("step_ingredients", (tbl) => {
+      tbl.increments("step_ingredients_id");
     });
 };
 
@@ -21,7 +24,8 @@ exports.up = async function (knex) {
  */
 exports.down = async function (knex) {
   await knex.schema
-    .dropTableIfExists("recipes")
+    .dropTableIfExists("step_ingredients")
+    .dropTableIfExists("steps")
     .dropTableIfExists("ingredients")
-    .dropTableIfExists("steps");
+    .dropTableIfExists("recipes");
 };
