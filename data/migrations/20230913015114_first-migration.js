@@ -7,15 +7,56 @@ exports.up = async function (knex) {
     .createTable("recipes", (tbl) => {
       tbl.increments("recipe_id");
       tbl.string("recipe_name").notNullable().unique();
-    })
-    .createTable("ingredients", (tbl) => {
-      tbl.increments("ingredient_id");
+      tbl.timestamps(true, true);
     })
     .createTable("steps", (tbl) => {
       tbl.increments("step_id");
+      tbl.integer("step_number").unsigned().notNullable().unique();
+      tbl.string("instructions").notNullable();
+      tbl
+        .integer("recipe_id")
+        .unsigned()
+        .notNullable()
+        .references("recipe_id")
+        .inTable("recipes")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl.timestamps(true, true);
     })
-    .createTable("step_ingredients", (tbl) => {
-      tbl.increments("step_ingredients_id");
+    .createTable("ingredients", (tbl) => {
+      tbl.increments("ingredient_id");
+      tbl.string("ingredient_name").notNullable().unique();
+      tbl.string("quantity").notNullable();
+      tbl
+        .integer("step_id")
+        .unsigned()
+        .notNullable()
+        .references("step_id")
+        .inTable("steps")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl.timestamps(true, true);
+    })
+    .createTable("recipe_ingredients", (tbl) => {
+      tbl.increments("recipe_ingredient_id");
+      tbl
+        .integer("recipe_id")
+        .unsigned()
+        .notNullable()
+        .references("recipe_id")
+        .inTable("recipes")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("ingredient_id")
+        .unsigned()
+        .notNullable()
+        .references("ingredient_id")
+        .inTable("ingredients")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl.integer("quantity").unsigned().notNullable();
+      tbl.timestamps(true, true);
     });
 };
 
@@ -25,8 +66,8 @@ exports.up = async function (knex) {
  */
 exports.down = async function (knex) {
   await knex.schema
-    .dropTableIfExists("step_ingredients")
-    .dropTableIfExists("steps")
+    .dropTableIfExists("recipe_ingredients")
     .dropTableIfExists("ingredients")
+    .dropTableIfExists("steps")
     .dropTableIfExists("recipes");
 };
