@@ -13,12 +13,52 @@ const getRecipeById = async (recipe_id) => {
       "step_number",
       "instructions",
       "i.ingredient_id",
-      "ingredient_name"
+      "ingredient_name",
+      "quantity"
     )
     .where("r.recipe_id", recipe_id)
     .orderBy("step_number");
 
-  return recipeRows;
+  const recipes = {
+    recipe_id: recipeRows[0].recipe_id,
+    recipe_name: recipeRows[0].recipe_name,
+    created_at: recipeRows[0].created_at,
+    steps: recipeRows.reduce((acc, row) => {
+      const stepObj = {
+        step_id: row.step_id,
+        step_number: row.step_number,
+        instructions: row.instructions,
+        ingredients: [],
+      };
+
+      const ingredientObj = {
+        ingredient_id: row.ingredient_id,
+        ingredient_name: row.ingredient_name,
+        quantity: row.quantity,
+      };
+
+      if (!row.ingredient_id) {
+        return acc.concat(stepObj);
+      } else if (
+        row.ingredient_id &&
+        !acc.find((step) => step.step_id === row.step_id)
+      ) {
+        return acc.concat({
+          step_id: row.step_id,
+          step_number: row.step_number,
+          instructions: row.instructions,
+          ingredients: [ingredientObj],
+        });
+      } else {
+        const currentStep = acc.find((step) => step.step_id === row.step_id);
+        currentStep.ingredients.push(ingredientObj);
+      }
+
+      return acc;
+    }, []),
+  };
+
+  return recipes;
 };
 
 // SELECT ******
@@ -29,7 +69,8 @@ const getRecipeById = async (recipe_id) => {
 // step_number, *****
 // instructions, ******
 // i.ingredient_id, *********
-// ingredient_name **********
+// ingredient_name, **********
+// quantity *************
 //     FROM recipes as r *******
 //         LEFT JOIN steps as s *******
 //             ON r.recipe_id = s.recipe_id ********
